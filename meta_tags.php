@@ -40,23 +40,21 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 class Meta_tags
 {
     protected static $_CI;
-    protected static $tags = array();
-    protected static $keywords = array();
-    protected static $robots = array();
-    
-    private static $_instance = NULL;
+    protected $tags = array();
+    protected $keywords = array();
+    protected $robots = array();
     
     /**
      * Class constructor with optional parameter
      * @param $config array optional array containing configuration
      */
-    private function __construct(Array $config = array())
+    public function __construct(Array $config = array())
     {
-        $this->_CI =& get_instance();
+        static::$_CI =& get_instance();
         
         if(count($config) < 1)
         {
-            $config = $this->_CI->config->item('meta_tags');
+            $config = static::$_CI->config->item('meta_tags');
             if(!$config)
                 $config = array();
         }  
