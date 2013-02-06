@@ -37,7 +37,6 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * Updated to take advantage of PHP5 class structure and some other minor
  * modifications
  */
-
 class Meta_tags
 {
     protected static $_CI;
@@ -47,38 +46,29 @@ class Meta_tags
     
     private static $_instance = NULL;
     
-    public static function _init(Array $config = array())
-    {
-        if (is_null(static::$_instance))
-        {
-            static::$_instance = new self($config);
-        }
-        return static::$_instance;
-    }
-    
     /**
-     * Class constructor with optional parameter, which calls the initialize() method
+     * Class constructor with optional parameter
      * @param $config array optional array containing configuration
      */
     private function __construct(Array $config = array())
     {
-        self::$_CI =& get_instance();
+        $this->_CI =& get_instance();
         
         if(count($config) < 1)
         {
-            $config = self::$_CI->config->item('meta_tags');
+            $config = $this->_CI->config->item('meta_tags');
             if(!$config)
                 $config = array();
         }  
 
         if(isset($config['tags']))
-            self::$tags = $config['tags'];
+            $this->tags = $config['tags'];
         
         if(isset($config['keywords']))
-            self::$keywords = $config['keywords'];
+            $this->keywords = $config['keywords'];
             
         if(isset($config['robots']))
-            self::$robots = $config['robots'];
+            $this->robots = $config['robots'];
     }
     
     /**
@@ -86,9 +76,9 @@ class Meta_tags
      * @param $name string
      * @param $content string
      */
-    public static function set_meta_tag($name, $content)
+    public function set_meta_tag($name, $content)
     {
-        self::$tags[$name] = $content;
+        $this->tags[$name] = $content;
     }
     
     /**
@@ -96,11 +86,11 @@ class Meta_tags
      * @param String $name
      * @param Mixed $content
      */
-    public static function add_meta_tag_value($name, $content)
+    public function add_meta_tag_value($name, $content)
     {
         if ((!is_string($name) && !is_array($name)) || (!is_string($content) && !is_array($content))) return false;
         
-        if ($cur = self::get_meta_tag($name))
+        if ($cur = $this->get_meta_tag($name))
         {
             if (is_string($cur) && strlen($cur) > 0)
             {
@@ -112,16 +102,16 @@ class Meta_tags
                 {
                     $cur .= $content;
                 }
-                self::set_meta_tag($name, $cur);
+                $this->set_meta_tag($name, $cur);
             }
             else 
             {
-                self::set_meta_tag($name, $content);
+                $this->set_meta_tag($name, $content);
             }
         }
         else
         {
-            self::set_meta_tag($name, $content);
+            $this->set_meta_tag($name, $content);
         }
     }
     
@@ -131,56 +121,56 @@ class Meta_tags
      * @param String $name
      * @abstract returns either current value for meta tag or false
      */
-    public static function get_meta_tag($name)
+    public function get_meta_tag($name)
     {
-        return isset(self::$tags[$name]) ? self::$tags[$name] : false;
+        return isset($this->tags[$name]) ? $this->tags[$name] : false;
     }
     
     /**
      * Removes a meta tag
      * @param $name string name of the tag
      */
-    public static function unset_meta_tag($name)
+    public function unset_meta_tag($name)
     {
-        unset(self::$tags[$name]);
+        unset($this->tags[$name]);
     }
     
     /**
      * Adds a unit to the keyword array
      * @param $keyword string
      */
-    public static function add_keyword($keyword)
+    public function add_keyword($keyword)
     {
         $this->remove_keyword($keyword);
-        self::$keywords[] = $keyword;
+        $this->keywords[] = $keyword;
     }
     
     /**
      * Searches the keywords array and removes the given keyword
      * @param $keyword string
      */
-    public static function remove_keyword($keyword)
+    public function remove_keyword($keyword)
     {
-        $this->_search_and_remove($keyword, self::$tags);
+        $this->_search_and_remove($keyword, $this->tags);
     }
     
     /**
      * Adds a rule to the robots array
      * @param $rule string
      */
-    public static function add_robots_rule($rule)
+    public function add_robots_rule($rule)
     {
-        self::remove_robots_rule($rule);
-        self::$robots[] = $rule;
+        $this->remove_robots_rule($rule);
+        $this->robots[] = $rule;
     }
     
     /**
      * Searches the robots array and removes the given rule
      * @param $rule string
      */
-    public static function remove_robots_rule($rule)
+    public function remove_robots_rule($rule)
     {
-        self::_search_and_remove($rule, self::$robots);
+        $this->_search_and_remove($rule, $this->robots);
     }
     
     /**
@@ -188,7 +178,7 @@ class Meta_tags
      * @param $needle string
      * @param $haystack array
      */
-    private static function _search_and_remove($needle, $haystack)
+    private function _search_and_remove($needle, $haystack)
     {
         $key = array_search($needle, $haystack);
         if($key)
@@ -201,25 +191,25 @@ class Meta_tags
      * Passes the contained data to private functions for processing
      * @return string the compiled meta tags for insertion into your view
      */
-    public static function generate_meta_tags()
+    public function generate_meta_tags()
     {
         $output = "\n";
         
-        if(count(self::$robots) > 0)
+        if(count($this->robots) > 0)
         {
-            $output .= '<meta name="robots" content="'.implode(',', self::$robots).'" />'."\n";
+            $output .= '<meta name="robots" content="'.implode(',', $this->robots).'" />'."\n";
         }
         
-        if(count(self::$tags) > 0)
+        if(count($this->tags) > 0)
         {
-            foreach(self::$tags as $name=>$content)
+            foreach($this->tags as $name=>$content)
             {
                 $output .= '<meta name="'.$name.'" content="'.$content.'" />'."\n";
             }
         }
-        if(count(self::$keywords) > 0)
+        if(count($this->keywords) > 0)
         {
-            $output .= '<meta name="keywords" content="'.implode(',', self::$keywords).'" />'."\n";
+            $output .= '<meta name="keywords" content="'.implode(',', $this->keywords).'" />'."\n";
         }
         return $output;
     }
