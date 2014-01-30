@@ -76,6 +76,7 @@ class MetaTags
 
     /**
      * Sets a meta tag with name and content
+     *
      * @param $name string
      * @param $content string
      * @return bool
@@ -87,12 +88,12 @@ class MetaTags
     }
 
     /**
-     * @name add_meta_tag_value
      * @param string $name
      * @param mixed $content
+     * @param string $concatenation
      * @return bool
      */
-    public function add_meta_tag_value($name, $content)
+    public function add_meta_tag_value($name, $content, $concatenation = ', ')
     {
         if ((!is_string($name) && !is_array($name)) || (!is_string($content) && !is_array($content)))
             return false;
@@ -102,9 +103,9 @@ class MetaTags
             if (is_string($cur) && strlen($cur) > 0)
             {
                 if (is_array($content))
-                    $cur .= implode(" ", $content);
+                    $cur .= implode($concatenation, $content);
                 else if (is_string($content))
-                    $cur .= $content;
+                    $cur .= $concatenation.$content;
                 
                 $this->set_meta_tag($name, $cur);
             }
@@ -132,6 +133,7 @@ class MetaTags
 
     /**
      * Removes a meta tag
+     *
      * @param $name string name of the tag
      * @return mixed
      */
@@ -144,6 +146,7 @@ class MetaTags
 
     /**
      * Adds a unit to the keyword array
+     *
      * @param $keyword string
      * @return bool
      */
@@ -156,6 +159,7 @@ class MetaTags
 
     /**
      * Searches the keywords array and removes the given keyword
+     *
      * @param $keyword string
      * @return mixed
      */
@@ -166,6 +170,7 @@ class MetaTags
 
     /**
      * Adds a rule to the robots array
+     *
      * @param $rule string
      * @return bool
      */
@@ -178,6 +183,7 @@ class MetaTags
 
     /**
      * Searches the robots array and removes the given rule
+     *
      * @param $rule string
      * @return mixed
      */
@@ -188,6 +194,7 @@ class MetaTags
 
     /**
      * Library-only function for searching and removing
+     *
      * @param $needle string
      * @param $haystack array
      * @return bool|mixed
@@ -206,6 +213,7 @@ class MetaTags
 
     /**
      * Passes the contained data to private functions for processing
+     * 
      * @return string the compiled meta tags for insertion into your view
      */
     public function generate_meta_tags()
